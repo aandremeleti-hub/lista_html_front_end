@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Jornada da Serpente - Python RPG</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome para Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="./refactoring.css">
+
+    
+</head>
+<body class="antialiased">
+
+    <!-- Header / HUD -->
+    <header class="fixed top-0 left-0 w-full bg-slate-900/90 border-b border-slate-700 z-50 px-4 py-3 flex justify-between items-center shadow-lg backdrop-blur-sm">
+        <div class="flex items-center gap-3">
+            <i class="fa-brands fa-python text-3xl text-yellow-400"></i>
+            <div>
+                <h1 class="rpg-font text-xs md:text-sm text-yellow-400">A Jornada da Serpente</h1>
+                <p class="text-xs text-slate-400">Lógica de Programação</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <div class="text-right hidden md:block">
+                <p class="text-xs text-slate-400">Progresso</p>
+                <div class="w-32 h-3 bg-slate-800 rounded-full mt-1 border border-slate-600 overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-green-500 w-0 transition-all duration-500"></div>
+                </div>
+            </div>
+            <button onclick="resetProgress()" class="text-xs border border-red-500 text-red-400 hover:bg-red-500/10 px-3 py-1 rounded transition-colors" title="Reiniciar Jogo">
+                <i class="fa-solid fa-skull"></i> Reset
+            </button>
+        </div>
+    </header>
+
+    <!-- Área do Mapa -->
+    <main class="map-container relative pt-24 pb-20 flex flex-col items-center">
+        
+        <!-- SVG Layer para desenhar as linhas (Fica atrás dos nós) -->
+        <svg id="map-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0 overflow-visible">
+            <!-- Caminhos gerados via JS -->
+        </svg>
+
+        <!-- Container onde os nós serão injetados -->
+        <div id="nodes-container" class="relative w-full max-w-4xl min-h-[1200px] mx-auto z-10">
+            <!-- Os nós serão gerados aqui pelo JavaScript -->
+        </div>
+
+    </main>
+
+    <!-- Modal de Missão -->
+    <div id="quest-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 modal-overlay bg-black/80">
+        <div class="bg-slate-800 border-2 border-slate-600 rounded-lg max-w-2xl w-full shadow-2xl transform transition-all scale-100 relative overflow-hidden">
+            
+            <!-- Modal Header -->
+            <div class="bg-slate-900 p-4 border-b border-slate-700 flex justify-between items-center">
+                <h2 id="modal-title" class="rpg-font text-yellow-400 text-sm md:text-base">Nome da Missão</h2>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 max-h-[70vh] overflow-y-auto">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="bg-slate-700 p-3 rounded-lg hidden md:block">
+                        <i id="modal-icon" class="fa-solid fa-scroll text-3xl text-blue-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white mb-2">Objetivo:</h3>
+                        <p id="modal-desc" class="text-slate-300 leading-relaxed text-sm md:text-base">Descrição da missão...</p>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="text-xs font-bold text-slate-500 uppercase mb-2">Pergaminho de Sabedoria (Código)</h4>
+                    <pre class="code-block p-4 rounded text-xs md:text-sm overflow-x-auto text-green-400 font-mono"><code id="modal-code">print("Hello World")</code></pre>
+                </div>
+
+                <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded mb-4">
+                    <h4 class="text-blue-400 font-bold text-sm mb-1"><i class="fa-solid fa-lightbulb"></i> Desafio Prático</h4>
+                    <p id="modal-challenge" class="text-sm text-slate-300">O que o usuário deve fazer mentalmente ou em sua IDE.</p>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-slate-900 border-t border-slate-700 flex justify-end gap-3">
+                <button onclick="closeModal()" class="px-4 py-2 text-slate-400 hover:text-white text-sm transition-colors">Voltar</button>
+                <button onclick="completeQuest()" class="px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded shadow-lg hover:shadow-green-500/50 transition-all text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-check"></i> Completar Missão
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensagem de Vitória (Toast) -->
+    <div id="victory-toast" class="fixed bottom-5 right-5 bg-green-600 text-white px-6 py-4 rounded shadow-2xl transform translate-y-24 transition-transform duration-300 z-[110] flex items-center gap-3">
+        <i class="fa-solid fa-trophy text-yellow-300 text-xl"></i>
+        <div>
+            <h4 class="font-bold text-sm">Nível Completado!</h4>
+            <p class="text-xs">O próximo desafio foi desbloqueado.</p>
+        </div>
+    </div>
+
+    <script>
+        // --- Dados da Trilha de Aprendizagem (RPG Data) ---
+        
+
+        // --- Estado do Jogo ---
+        let playerProgress = {
+            completed: [], // IDs dos níveis completados
+            unlocked: [1]  // IDs dos níveis desbloqueados
+        };
+
+        let currentActiveLevelId = null;
+
+        // --- Inicialização ---
+        function initGame() {
+            loadProgress();
+            renderMap();
+            window.addEventListener('resize', () => {
+                drawPaths(); // Redesenha as linhas ao redimensionar
+            });
+        }
+
+        // --- Gestão de Progresso (LocalStorage) ---
+        function loadProgress() {
+            const saved = localStorage.getItem('rpg_python_progress');
+            if (saved) {
+                playerProgress = JSON.parse(saved);
+            }
+            updateProgressBar();
+        }
+
+        function saveProgress() {
+            localStorage.setItem('rpg_python_progress', JSON.stringify(playerProgress));
+            updateProgressBar();
+        }
+
+        function resetProgress() {
+            if(confirm("Deseja realmente reiniciar toda a sua jornada?")) {
+                playerProgress = { completed: [], unlocked: [1] };
+                saveProgress();
+                renderMap();
+            }
+        }
+
+        function updateProgressBar() {
+            const total = gameLevels.length;
+            const completedCount = playerProgress.completed.length;
+            const percentage = (completedCount / total) * 100;
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+        }
+
+        // --- Renderização do Mapa ---
+        function renderMap() {
+            const container = document.getElementById('nodes-container');
+            container.innerHTML = ''; // Limpa
+
+            gameLevels.forEach(level => {
+                const isUnlocked = playerProgress.unlocked.includes(level.id);
+                const isCompleted = playerProgress.completed.includes(level.id);
+                const isCurrent = isUnlocked && !isCompleted;
+
+                // Elemento do Nó
+                const node = document.createElement('div');
+                
+                // Classes base
+                let classes = "level-node absolute w-16 h-16 md:w-20 md:h-20 rounded-full border-4 flex items-center justify-center bg-slate-800 transition-all duration-300 ";
+                
+                // Classes de estado
+                if (isCompleted) classes += "node-completed border-emerald-500 text-emerald-100";
+                else if (isUnlocked) classes += "node-unlocked border-blue-500 text-blue-100 bg-slate-700";
+                else classes += "node-locked border-slate-600 text-slate-600";
+
+                if (isCurrent) classes += " current-quest";
+
+                node.className = classes;
+                
+                // Posicionamento
+                // Em telas pequenas (mobile), ignoramos um pouco o X para centralizar mais, ou mantemos um zigzag menor
+                // Usaremos lógica inline style para Top/Left baseada no JSON
+                node.style.top = `${level.y}%`;
+                
+                // Lógica simples de responsividade no JS para o Left
+                const isMobile = window.innerWidth < 768;
+                const finalX = isMobile ? (level.id % 2 === 0 ? 65 : 35) : level.x; // Zigzag simples no mobile
+                node.style.left = `${finalX}%`;
+                node.style.transform = "translate(-50%, -50%)"; // Centraliza no ponto exato
+
+                node.id = `node-${level.id}`;
+                node.innerHTML = `<i class="${level.icon} text-xl md:text-2xl"></i>`;
+                
+                // Tooltip / Label
+                const label = document.createElement('div');
+                label.className = `absolute -bottom-8 md:-bottom-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap text-[10px] md:text-xs font-bold px-2 py-1 rounded bg-slate-900 border border-slate-700 shadow-md ${isUnlocked ? 'text-white' : 'text-slate-600'}`;
+                label.innerText = `Nvl ${level.id}: ${level.title.split('(')[0]}`; // Nome curto
+                node.appendChild(label);
+
+                // Evento de Clique
+                node.onclick = () => {
+                    if (isUnlocked) openLevelModal(level);
+                };
+
+                container.appendChild(node);
+            });
+
+            // Após colocar os nós no DOM, desenhamos as linhas
+            // Timeout pequeno para garantir renderização
+            setTimeout(drawPaths, 50);
+        }
+
+        // --- Desenhar Linhas (SVG) ---
+        function drawPaths() {
+            const svg = document.getElementById('map-svg');
+            svg.innerHTML = ''; // Limpa linhas anteriores
+
+            const containerRect = document.getElementById('nodes-container').getBoundingClientRect();
+
+            gameLevels.forEach((level, index) => {
+                // Se não for o último, desenha linha para o próximo
+                // Lógica simplificada: conecta sequencialmente (1->2, 2->3)
+                // Na estrutura de dados, 'unlocks' define o próximo, mas aqui assumiremos linearidade para o desenho visual principal
+                
+                if (index < gameLevels.length - 1) {
+                    const nextLevelId = level.id + 1; // Assumindo linearidade 1,2,3...
+                    const currNode = document.getElementById(`node-${level.id}`);
+                    const nextNode = document.getElementById(`node-${nextLevelId}`);
+
+                    if (currNode && nextNode) {
+                        const pos1 = getCenterPosition(currNode, containerRect);
+                        const pos2 = getCenterPosition(nextNode, containerRect);
+
+                        // Cria a linha
+                        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        
+                        // Estado da linha (colorida se o nível de origem estiver completo)
+                        const isPathActive = playerProgress.completed.includes(level.id);
+                        const color = isPathActive ? "#10b981" : "#475569"; // Verde ou Cinza
+                        const width = isPathActive ? 4 : 2;
+
+                        // Curva de Bézier cúbica para suavidade
+                        const d = `M ${pos1.x} ${pos1.y} C ${pos1.x} ${pos1.y + 50}, ${pos2.x} ${pos2.y - 50}, ${pos2.x} ${pos2.y}`;
+
+                        path.setAttribute("d", d);
+                        path.setAttribute("stroke", color);
+                        path.setAttribute("stroke-width", width);
+                        path.setAttribute("fill", "none");
+                        path.setAttribute("stroke-linecap", "round");
+                        if(isPathActive) path.classList.add('path-line'); // Animação
+
+                        svg.appendChild(path);
+                    }
+                }
+            });
+        }
+
+        function getCenterPosition(element, containerRect) {
+            const rect = element.getBoundingClientRect();
+            return {
+                x: rect.left + rect.width / 2 - containerRect.left, // Relativo ao container
+                y: rect.top + rect.height / 2 - containerRect.top
+            };
+        }
+
+        // --- Sistema de Modal ---
+        const modal = document.getElementById('quest-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+        const modalCode = document.getElementById('modal-code');
+        const modalChallenge = document.getElementById('modal-challenge');
+        const modalIcon = document.getElementById('modal-icon');
+
+        function openLevelModal(level) {
+            currentActiveLevelId = level.id;
+            
+            modalTitle.innerText = level.title;
+            modalDesc.innerHTML = level.desc;
+            modalCode.innerText = level.code;
+            modalChallenge.innerText = level.challenge;
+            modalIcon.className = `${level.icon} text-3xl text-blue-400`;
+
+            // Botão muda se já completou
+            const btn = document.querySelector('#quest-modal button[onclick="completeQuest()"]');
+            if(playerProgress.completed.includes(level.id)) {
+                btn.innerHTML = '<i class="fa-solid fa-rotate-left"></i> Refazer';
+                btn.className = "px-6 py-2 bg-slate-600 hover:bg-slate-500 text-white font-bold rounded shadow-lg transition-all text-sm flex items-center gap-2";
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Completar Missão';
+                btn.className = "px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded shadow-lg hover:shadow-green-500/50 transition-all text-sm flex items-center gap-2";
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            currentActiveLevelId = null;
+        }
+
+        function completeQuest() {
+            if (!currentActiveLevelId) return;
+
+            // Encontrar nível atual
+            const level = gameLevels.find(l => l.id === currentActiveLevelId);
+            
+            // Adicionar aos completados se não estiver
+            if (!playerProgress.completed.includes(level.id)) {
+                playerProgress.completed.push(level.id);
+                showToast();
+            }
+
+            // Desbloquear próximos
+            if (level.unlocks && level.unlocks.length > 0) {
+                level.unlocks.forEach(unlockId => {
+                    if (!playerProgress.unlocked.includes(unlockId)) {
+                        playerProgress.unlocked.push(unlockId);
+                    }
+                });
+            }
+
+            saveProgress();
+            renderMap(); // Atualiza visual
+            closeModal();
+        }
+
+        // --- UI Auxiliar ---
+        function showToast() {
+            const toast = document.getElementById('victory-toast');
+            toast.classList.remove('translate-y-24');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24');
+            }, 3000);
+        }
+
+        // Start
+        initGame();
+
+    </script>
+</body>
+</html>
