@@ -9,6 +9,39 @@ body {
 
 }
 
+.container-header{
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.social-icons-box{
+    display: flex;
+    gap: 30px;
+}
+
+.nav-header-list{
+    display: flex;
+    text-decoration: none;
+    list-style: none;
+    gap: 100px;
+    justify-content: center;
+    padding: 40px;
+    background-color: rgb(211, 122, 20);
+}
+
+.nav-header-list li a{
+    text-decoration: none;
+    color: brown;
+    border: 2px solid rgb(255, 255, 255);
+    border-radius: 20px;
+    padding: 8px;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    font-weight: 500;
+    background-color:  rgb(211, 122, 20);
+}
+
 main {
     display: grid;
     grid-template-columns: 80% 20%;
@@ -21,12 +54,29 @@ article {
     display: flex;
     flex-direction: column;
     padding: 80px;
-    background-color: rgb(243, 239, 235);
     box-shadow: 0 6px 16px;
-    align-items: center;
+    align-items: flex-start;
     gap: 20px;
     border-radius: 30px;
     height: 60vh;
+    justify-content: center;
+}
+
+article h1 {
+    padding: 40px;
+}
+
+article p{
+    width: 400px;
+    padding: 40px;
+}
+
+.container-article{
+    background-image: url(./html.svg);
+    background-size:contain;
+    background-position: right;
+    background-repeat: no-repeat;
+    padding: 20px;
 }
 
 section{
@@ -35,10 +85,26 @@ section{
     padding: 80px;
     background-color: rgb(243, 239, 235);
     box-shadow: 0 6px 16px;
-    align-items: center;
+    align-items: flex-start;
     gap: 20px;
     border-radius: 30px;
     height: 40vh;
+}
+
+.container-comments{
+    background-image: url(./comments.svg);
+    background-size:contain;
+    background-position: right;
+    background-repeat: no-repeat;
+    padding: 20px;
+}
+
+section h2{
+    padding: 40px 15px 15px 40px;
+}
+
+section p{
+    padding: 40px 15px 15px 40px;
 }
 
 aside{
@@ -51,4 +117,12 @@ aside{
     justify-content: center;
     gap: 20px;
     border-radius: 30px;
+}
+
+.container-js{
+    background-image: url(./js\ 1.svg);
+    background-size:contain;
+    background-position: right;
+    background-repeat: no-repeat;
+    padding: 20px;
 }
