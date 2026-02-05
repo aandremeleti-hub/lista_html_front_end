@@ -108,21 +108,19 @@ section p{
 }
 
 aside{
-    display: flex;
-    flex-direction: column;
-    padding: 80px;
-    background-color: rgb(243, 239, 235);
-    box-shadow: 0 6px 16px;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    border-radius: 30px;
+    
 }
 
 .container-js{
-    background-image: url(./js\ 1.svg);
-    background-size:contain;
-    background-position: right;
+    background-image: url(./js2.svg);
+    background-size:cover;
+    background-position: center;
     background-repeat: no-repeat;
     padding: 20px;
+    height: 400px;
+    border-radius: 30px;
+}
+
+.container-js h2{
+    color: white;
 }
