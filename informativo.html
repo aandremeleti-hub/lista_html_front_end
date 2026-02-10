@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="informativo.css">
+    <script src="./JavaScript/script.js" defer></script>
     <title>Informativo</title>
 </head>
 
@@ -18,8 +19,8 @@
             <section class="controls-card">
                 <h3 ><span class="dot" style="background: var(--primary);"></span>Escolher layout</h3>
                 <div class="button-group">
-                    <button id="btnFlex" class="btn active-flex">FlexBox</button>
-                    <button id="btnGrid" class="btn active-grid">Grid</button>
+                    <button id="btnFlex" onclick="setMode('flex')" class="btn active-flex">FlexBox</button>
+                    <button id="btnGrid" onclick="setMode('grid')" class="btn active-grid">Grid</button>
                 </div>
             </section>
             <section class="controls-card">
@@ -29,7 +30,7 @@
                     <p id="txtIdeal" style="margin: 0; font-size: 0.85rem; color: var(--text-muted);">O layout é calculado item a item. Ótimo para distribuir espaço em uma linha</p>
                 </div>
             </section>
-            <section id="democontainer" class="demo-container mode-flex">
+            <section id="demoContainer" class="demo-container mode-flex">
                 <!-- Gerado dinamicamente -->
             </section>
             <footer class="info-footer">
