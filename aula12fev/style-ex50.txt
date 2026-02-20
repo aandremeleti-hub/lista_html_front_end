@@ -1,0 +1,143 @@
+* {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+
+}
+
+.container-header{
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.social-icons-box{
+    display: flex;
+    gap: 30px;
+}
+
+.nav-header-list{
+    display: flex;
+    text-decoration: none;
+    list-style: none;
+    gap: 100px;
+    justify-content: center;
+    padding: 40px;
+    background-color: rgb(211, 122, 20);
+}
+
+.nav-header-list li a{
+    text-decoration: none;
+    color: brown;
+    border: 2px solid rgb(255, 255, 255);
+    border-radius: 30px;
+    padding: 8px;
+    font-size: 20px;
+    color: rgb(255, 255, 255);
+    font-weight: 500;
+    background-color:  rgb(211, 122, 20);
+}
+
+main {
+    display: grid;
+    grid-template-columns: 80% 20%;
+    align-items: stretch;
+    height: 100vh;
+}
+
+
+article {
+    display: flex;
+    flex-direction: column;
+    padding: 80px;
+    box-shadow: 0 6px 16px;
+    align-items: flex-start;
+    gap: 20px;
+    border-radius: 30px;
+    height: 60vh;
+    justify-content: center;
+}
+
+article h1 {
+    padding: 40px;
+}
+
+article p{
+    width: 400px;
+    padding: 40px;
+}
+
+.container-article{
+    background-image: url(./html.svg);
+    background-size:contain;
+    background-position: right;
+    background-repeat: no-repeat;
+    padding: 20px;
+}
+
+section{
+    display: flex;
+    flex-direction: column;
+    padding: 80px;
+    background-color: rgb(243, 239, 235);
+    box-shadow: 0 6px 16px;
+    align-items: flex-start;
+    gap: 20px;
+    border-radius: 30px;
+    height: 40vh;
+}
+
+.container-comments{
+    background-image: url(./comments.svg);
+    background-size:contain;
+    background-position: right;
+    background-repeat: no-repeat;
+    padding: 20px;
+}
+
+section h2{
+    padding: 40px 15px 15px 40px;
+}
+
+section p{
+    padding: 40px 15px 15px 40px;
+}
+
+aside{
+    
+}
+
+.container-js{
+    background-image: url(./js2.svg);
+    background-size:cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 20px;
+    height: 400px;
+    border-radius: 30px;
+}
+
+.container-js h2 {
+    color: white;              /* Cor do texto */
+    background-color: rgb(211, 122, 20);;   /* Fundo preto */
+    display: inline-block;     /* Faz ocupar só o tamanho do conteúdo */
+    padding: 5px 20px;         /* Espaço interno (opcional, melhora visual) */
+    border: 2px solid white;
+    border-radius: 30px;
+}
+
+.content-js{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+}
+
+.title-js{
+    color: rgb(211, 122, 20);
+    font-size: smaller;
+}
